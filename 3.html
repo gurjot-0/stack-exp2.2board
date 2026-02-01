@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Listing Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .product-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .product-card p {
+      margin: 5px 0;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Product Listing</h1>
+
+<div class="controls">
+  <select id="categoryFilter">
+    <option value="all">All Categories</option>
+    <option value="Electronics">Electronics</option>
+    <option value="Clothing">Clothing</option>
+    <option value="Books">Books</option>
+    <option value="Home">Home</option>
+  </select>
+
+  <select id="sortOption">
+    <option value="">Sort By</option>
+    <option value="price-asc">Price: Low to High</option>
+    <option value="price-desc">Price: High to Low</option>
+    <option value="name-asc">Name: A–Z</option>
+    <option value="name-desc">Name: Z–A</option>
+    <option value="rating-asc">Rating: Low to High</option>
+    <option value="rating-desc">Rating: High to Low</option>
+  </select>
+</div>
+
+<div class="product-grid" id="productGrid"></div>
+
+<script>
+  const products = [
+    { name: "Smartphone", price: 699, rating: 4.5, category: "Electronics" },
+    { name: "Laptop", price: 999, rating: 4.7, category: "Electronics" },
+    { name: "Headphones", price: 199, rating: 4.2, category: "Electronics" },
+    { name: "Smartwatch", price: 249, rating: 4.0, category: "Electronics" },
+    { name: "T-Shirt", price: 25, rating: 4.1, category: "Clothing" },
+    { name: "Jeans", price: 60, rating: 4.3, category: "Clothing" },
+    { name: "Jacket", price: 120, rating: 4.6, category: "Clothing" },
+    { name: "Sneakers", price: 90, rating: 4.4, category: "Clothing" },
+    { name: "Novel Book", price: 15, rating: 4.8, category: "Books" },
+    { name: "Cookbook", price: 22, rating: 4.5, category: "Books" },
+    { name: "Science Book", price: 30, rating: 4.2, category: "Books" },
+    { name: "History Book", price: 28, rating: 4.1, category: "Books" },
+    { name: "Coffee Maker", price: 85, rating: 4.3, category: "Home" },
+    { name: "Vacuum Cleaner", price: 150, rating: 4.6, category: "Home" },
+    { name: "Blender", price: 70, rating: 4.0, category: "Home" },
+    { name: "Air Fryer", price: 130, rating: 4.7, category: "Home" },
+    { name: "Desk Lamp", price: 40, rating: 4.2, category: "Home" },
+    { name: "Monitor", price: 220, rating: 4.4, category: "Electronics" },
+    { name: "Hoodie", price: 55, rating: 4.5, category: "Clothing" },
+    { name: "Notebook", price: 10, rating: 4.1, category: "Books" }
+  ];
+
+  const productGrid = document.getElementById("productGrid");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const sortOption = document.getElementById("sortOption");
+
+  function renderProducts(list) {
+    productGrid.innerHTML = "";
+    list.forEach(product => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <h3>${product.name}</h3>
+        <p>Price: $${product.price}</p>
+        <p>Rating: ${product.rating}</p>
+        <p>Category: ${product.category}</p>
+      `;
+      productGrid.appendChild(card);
+    });
+  }
+
+  function applyFiltersAndSort() {
+    let filteredProducts = [...products];
+
+    const category = categoryFilter.value;
+    if (category !== "all") {
+      filteredProducts = filteredProducts.filter(p => p.category === category);
+    }
+
+    const sortValue = sortOption.value;
+    if (sortValue) {
+      const [key, order] = sortValue.split("-");
+      filteredProducts.sort((a, b) => {
+        if (key === "name") {
+          return order === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name);
+        }
+        return order === "asc" ? a[key] - b[key] : b[key] - a[key];
+      });
+    }
+
+    renderProducts(filteredProducts);
+  }
+
+  categoryFilter.addEventListener("change", applyFiltersAndSort);
+  sortOption.addEventListener("change", applyFiltersAndSort);
+
+  renderProducts(products);
+</script>
+
+</body>
+</html>
